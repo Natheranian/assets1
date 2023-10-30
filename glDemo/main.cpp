@@ -5,6 +5,7 @@
 #include "PrincipleAxes.h"
 #include "AIMesh.h"
 #include "Cube.h"
+#include "Tetrahedron.h"
 #include "2DExamples.h"
 
 
@@ -24,8 +25,10 @@ double				prevMouseX, prevMouseY;
 // Scene objects
 CGPrincipleAxes* principleAxes = nullptr;
 Cube* cube = nullptr;
+Tetrahedron* tetrahedron = nullptr;
 AIMesh* creatureMesh = nullptr;
 AIMesh* planetMesh = nullptr;
+AIMesh* cityMesh = nullptr;
 
 // Window size
 const unsigned int initWidth = 512;
@@ -96,8 +99,9 @@ int main() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // setup background colour to be black
 	glClearDepth(1.0f);
 
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT, GL_FILL);
+	//glPolygonMode(GL_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
@@ -113,12 +117,14 @@ int main() {
 	principleAxes = new CGPrincipleAxes();
 
 	cube = new Cube();
+	tetrahedron = new Tetrahedron();
 
 	creatureMesh = new AIMesh(string("Assets\\beast\\beast.obj"));
 	if (creatureMesh) {
 		creatureMesh->addTexture(string("Assets\\beast\\beast_texture.bmp"), FIF_BMP);
 	}
 
+	cityMesh = new AIMesh(string("Assets\\city\\cityman.obj"));
 
 	planetMesh = new AIMesh(string("Assets\\gsphere.obj"));
 	if (planetMesh) {
@@ -188,16 +194,16 @@ void renderScene()
 
 #endif
 
-#if 0
+#if 1
 
 	// Render cube - no modelling transform so leave cameraTransform set in OpenGL and render
 	glLoadMatrixf((GLfloat*)&cameraTransform);
 	glDisable(GL_CULL_FACE);
-	cube->render();
+	tetrahedron->render();
 
 #endif
 
-#if 1
+#if 0
 	
 	if (creatureMesh) {
 
@@ -222,6 +228,18 @@ void renderScene()
 	}
 #endif
 
+#if 0
+	if (cityMesh)
+	{
+		mat4 cityTranslate = translate(identity<mat4>(), vec3(50.0f, 0.0f, -50.0f));
+		mat4 T = cameraTransform * cityTranslate;
+		glLoadMatrixf((GLfloat*)&T);
+
+		cityMesh->preRender();
+		cityMesh->render();
+		cityMesh->postRender();
+	}
+#endif
 }
 
 
